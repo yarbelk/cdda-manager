@@ -22,6 +22,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/yarbelk/cdda-manager/cmd/list"
 )
 
 var (
@@ -32,8 +33,8 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list available versions to download",
+	Use:   "cdda-manager",
+	Short: "?",
 	Long: `Launcher manages and launches version of CDDA, worlds and mods
 
 It has both a CLI, and a wishfull GUI (its all in your head)`,
@@ -56,12 +57,14 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.AddCommand(list.ListCommand)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.launcher.yaml)")
 	rootCmd.Flags().StringVar(&gamePath, "gameExecutable", "", "Executable for game")
 	rootCmd.Flags().StringVar(&workingDir, "workingDir", "", "working dir")
+	viper.BindPFlag("game", rootCmd.PersistentFlags().Lookup("author"))
 }
 
 // initConfig reads in config file and ENV variables if set.
