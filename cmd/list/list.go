@@ -10,7 +10,8 @@ import (
 
 const url = "http://dev.narc.ro/cataclysm/jenkins-latest/"
 
-var listCommand = &cobra.Command{
+// ListCommand prints out available versions
+var ListCommand = &cobra.Command{
 	Use:   "list",
 	Short: "Print all the available versions for your OS",
 	Long:  `Print all the available versions for your OS`,
@@ -26,7 +27,7 @@ var listCommand = &cobra.Command{
 		avCurses, _ := downloader.ListGameVersions(os, downloader.Tiles, url)
 		av := append(avTiled, avCurses...)
 		for _, a := range av {
-			fmt.Println(a.Name)
+			fmt.Println(a)
 		}
 	},
 }

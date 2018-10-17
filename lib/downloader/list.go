@@ -8,7 +8,10 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// Option is for Tiled or Curses
 type Option int
+
+// Build is for OS/Arch
 type Build int
 
 const (
@@ -18,16 +21,20 @@ const (
 
 // only 64 bit for now
 const (
-	Linux Build = iota
-	LinuxX64
+	LinuxX64 Build = iota
 	Darwin
 	Windows
 	WindowsX64
 )
 
+// AvailableVersion tells you about the version that ex
 type AvailableVersion struct {
 	Target string
 	Name   string
+}
+
+func (av AvailableVersion) String() string {
+	return av.Name
 }
 
 func ListGameVersions(os Build, option Option, base string) ([]AvailableVersion, error) {
@@ -35,8 +42,6 @@ func ListGameVersions(os Build, option Option, base string) ([]AvailableVersion,
 	var name string
 	url, _ := url.Parse(base)
 	switch os {
-	case Linux:
-		url.Path = filepath.Join(url.Path, "/Linux")
 	case LinuxX64:
 		url.Path = filepath.Join(url.Path, "/Linux_x64")
 	case Darwin:
@@ -75,7 +80,7 @@ func ListGameVersions(os Build, option Option, base string) ([]AvailableVersion,
 
 func getFilename(a string, os Build) string {
 	switch os {
-	case Linux, LinuxX64:
+	case LinuxX64:
 		return a[:len(a)-len(".tar.gz")]
 	case Darwin:
 		return a[:len(a)-len(".dmg")]
