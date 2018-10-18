@@ -6,25 +6,17 @@ import (
 	"path/filepath"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/yarbelk/cdda-manager/build"
 )
 
 // Option is for Tiled or Curses
 type Option int
 
-// Build is for OS/Arch
-type Build int
-
 const (
+	// Tiles is the graphical SDL based version
 	Tiles Option = iota
+	// Curses is the venerable but still cool ASCII version
 	Curses
-)
-
-// only 64 bit for now
-const (
-	LinuxX64 Build = iota
-	Darwin
-	Windows
-	WindowsX64
 )
 
 // AvailableVersion tells you about the version that ex
@@ -37,19 +29,22 @@ func (av AvailableVersion) String() string {
 	return av.Name
 }
 
-func ListGameVersions(os Build, option Option, base string) ([]AvailableVersion, error) {
+// ListGameVersions currently in the upstream repo
+func ListGameVersions(os build.Build, option Option, base string) ([]AvailableVersion, error) {
 	client := http.Client{Transport: http.DefaultTransport}
 	var name string
 	url, _ := url.Parse(base)
-	switch os {
-	case LinuxX64:
+	switch build.BuildV {
+	case build.LinuxX64:
 		url.Path = filepath.Join(url.Path, "/Linux_x64")
-	case Darwin:
+	case build.Darwin:
 		url.Path = filepath.Join(url.Path, "/OSX")
-	case Windows:
+	case build.Windows:
 		url.Path = filepath.Join(url.Path, "/Windows")
-	case WindowsX64:
+	case build.WindowsX64:
 		url.Path = filepath.Join(url.Path, "/Windows_x64")
+	default:
+		panic("Unsupoorted")
 	}
 
 	switch option {
@@ -58,17 +53,18 @@ func ListGameVersions(os Build, option Option, base string) ([]AvailableVersion,
 		name = "Tiles "
 	case Curses:
 		url.Path = filepath.Join(url.Path, "/Curses")
+		name = "Curses "
 	}
 
 	response, _ := client.Get(url.String())
 	doc, _ := goquery.NewDocumentFromReader(response.Body)
 	av := make([]AvailableVersion, 0)
-	doc.Find("tr").Each(func(i int, s *goquery.Selection) {
-		if alt, ok := s.Find("img").Attr("alt"); ok && alt == "[   ]" {
-			a, _ := s.Find("a").Attr("href")
-			filename := getFilename(a, os)
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		// This is super fragile
+		if href, ok := s.Attr("href"); ok && len(href) >= 12 && href[:12] == "cataclysmdda" {
+			filename := getFilename(href, os)
 			av = append(av, AvailableVersion{
-				Target: url.String() + "/" + a,
+				Target: url.String() + "/" + href,
 				Name:   name + filename,
 			})
 		}
@@ -78,13 +74,13 @@ func ListGameVersions(os Build, option Option, base string) ([]AvailableVersion,
 	return av, nil
 }
 
-func getFilename(a string, os Build) string {
-	switch os {
-	case LinuxX64:
+func getFilename(a string, os build.Build) string {
+	switch build.BuildV {
+	case build.LinuxX64:
 		return a[:len(a)-len(".tar.gz")]
-	case Darwin:
+	case build.Darwin:
 		return a[:len(a)-len(".dmg")]
-	case WindowsX64, Windows:
+	case build.WindowsX64, build.Windows:
 		return a[:len(a)-len(".zip")]
 	default:
 		return a

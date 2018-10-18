@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/yarbelk/cdda-manager/build"
 	"github.com/yarbelk/cdda-manager/lib/downloader"
 )
 
@@ -27,7 +28,7 @@ func TestGetNightlyList(t *testing.T) {
 
 	http.DefaultTransport = roundTripFunction
 
-	os := downloader.LinuxX64
+	os := build.LinuxX64
 	option := downloader.Tiles
 	base := "http://dev.narc.ro/cataclysm/jenkins-latest/"
 

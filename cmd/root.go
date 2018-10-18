@@ -22,13 +22,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/yarbelk/cdda-manager/cmd/list"
 )
 
 var (
-	cfgFile    string
-	gamePath   string
-	workingDir string
+	cfgFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -56,8 +53,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	rootCmd.AddCommand(list.ListCommand)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
