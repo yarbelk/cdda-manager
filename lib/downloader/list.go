@@ -23,6 +23,7 @@ const (
 type AvailableVersion struct {
 	Target string
 	Name   string
+	File   string
 }
 
 func (av AvailableVersion) String() string {
@@ -66,6 +67,7 @@ func ListGameVersions(os build.Build, option Option, base string) ([]AvailableVe
 			av = append(av, AvailableVersion{
 				Target: url.String() + "/" + href,
 				Name:   name + filename,
+				File:   href,
 			})
 		}
 

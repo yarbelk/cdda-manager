@@ -6,6 +6,7 @@ require (
 	github.com/golang/protobuf v1.2.0 // indirect
 	github.com/jlaffaye/ftp v0.0.0-20180808211605-3f6433f7eae3
 	github.com/mitchellh/go-homedir v1.0.0
+	github.com/mitchellh/ioprogress v0.0.0-20180201004757-6a23b12fa88e
 	github.com/sirupsen/logrus v1.0.6
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.2.0
